@@ -1,32 +1,32 @@
-const express=require("express");
+const express = require("express");
+const connectDB = require("./config/database");
+const app = express();
+const User = require("./models/user");
 
+app.post("/signup", async (req, res) => {
+  // Creating a new instance of the User Model
+  const user = new User({
+    firstName: "Cristiano",
+    lastName: "Ronaldo",
+    emailId: "cristiano@ronaldo.com",
+    password: "cr@123",
+  });
 
-const app=express();
-
-// app.use("/route",[rh1,rh2,rh3],rh4);
-// GET /users => It checks all the app.xxx("matching route") functions
-// GET /users =? middleware chain => request handler 
-
-app.get("/getUserData",(req,res)=>{
-    // Logic of DB call and get user data
-    try{
-        throw new Error("dvbzhij");
-        res.send("User Data Sent");
-    }
-    catch{
-        res.status(500).send("something went wrong in catch block!!");
-    }
-    
+  try {
+    await user.save();
+    res.send("User added successfully");
+  } catch (err) {
+    res.status(400).send("Error saving the user:" + err.message);
+  }
 });
 
-app.use("/",(err,req,res,next)=>{
-    if(err){
-        // Log your error
-        
-    }
-});
-
-app.listen(3000,()=>{
-    console.log("Server is successfully listening on port 3000...");
-    
-});
+connectDB()
+  .then(() => {
+    console.log("Database connection established...");
+    app.listen(3000, () => {
+      console.log("Server is successfully listening on port 3000...");
+    });
+  })
+  .catch((err) => {
+    console.error("Database cannot be connected!");
+  });
