@@ -29,8 +29,13 @@ userRouter.get("/user/connections", userAuth, async(req,res)=>{
                 {toUserId:loggedInUser._id,status:"accepted"},
                 {fromUserId:loggedInUser._id,status:"accepted"},
             ]
-        }).populate("fromUserId",USER_SAVE_DATA);
-        const data=connectionRequests.map(row=>row.fromUserId);
+        }).populate("fromUserId",USER_SAVE_DATA).populate("toUserId",USER_SAVE_DATA);
+        const data=connectionRequests.map(row=>{
+            if(row.fromUserId._id.toString()===loggedInUser._id.toString()){
+                return row.toUserId;
+            }
+            return row.fromUserId;
+        });
         res.json({data});
     } catch(err){
         res.status(400).send("ERROR :" + err.message);
