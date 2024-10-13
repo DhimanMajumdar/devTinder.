@@ -21,6 +21,7 @@
    - GET /user/connections
    - GET /user/requests/received
    - GET /user/feed- gets you the profiles of users on the platform
+   - explore the $nin,$and,$ne ...
 
 
    Status : ignore,interested,accepted,rejected
