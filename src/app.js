@@ -4,10 +4,18 @@ const app = express();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
-app.use(cors({
-  origin: "http://localhost:5173",  // Allow only the front-end URL
-  credentials: true                 // Allow credentials like cookies or authorization headers
-}));
+// CORS configuration
+const corsOptions = {
+  origin: 'http://localhost:5173',  // Your frontend URL
+  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],  // Ensure PATCH is allowed
+  credentials: true,  // Allow credentials (like cookies)
+};
+
+// Apply CORS middleware with the correct options
+app.use(cors(corsOptions));
+
+// Handle preflight requests (OPTIONS)
+app.options('*', cors(corsOptions));
 
 // Body parsing middleware
 app.use(express.json());
