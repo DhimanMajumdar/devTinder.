@@ -17,9 +17,6 @@ app.use(cors(corsOptions));
 // Handle preflight requests (OPTIONS)
 app.options('*', cors(corsOptions));
 
-// Body parsing middleware
-app.use(express.json());
-app.use(cookieParser());
 
 
 // Body parsing middleware
