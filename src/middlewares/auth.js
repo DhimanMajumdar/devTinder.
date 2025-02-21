@@ -9,7 +9,7 @@ const userAuth = async (req, res, next) => {
       return res.status(401).send("Unauthorized: No token provided");
     }
     
-    const decodeObj = jwt.verify(token,"DEV@Tinder$790");
+    const decodeObj = jwt.verify(token,process.env.JWT_SECRET);
     const { _id } = decodeObj;
     
     const user = await User.findById(_id);
