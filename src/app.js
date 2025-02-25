@@ -3,6 +3,7 @@ const connectDB = require("./config/database");
 const app = express();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const http=require('http');
 require('dotenv').config()
 
 // CORS configuration
@@ -24,22 +25,27 @@ app.options('*', cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
+
+
 // Import routes
 const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/request");
 const userRouter = require("./routes/user");
+const chatRouter=require("./routes/chat");
+const initializeSocket = require("./utils/socket");
 
 // Use routers
-app.use("/", authRouter, profileRouter, requestRouter, userRouter);
-
+app.use("/", authRouter, profileRouter, requestRouter, userRouter,chatRouter);
+const server=http.createServer(app);
+initializeSocket(server);
 // Connect to the database and start server
 connectDB()
   .then(() => {
-    console.log("Database connection established...");
+    console.log("Database connection established...");  
     
     // Listen on port 5000
-    app.listen(5000, () => {
+    server.listen(5000, () => {
       console.log("Server is successfully listening on port 5000...");
     });
   })
