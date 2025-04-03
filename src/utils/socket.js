@@ -13,11 +13,19 @@ const getSecretRoomId = (userId, targetUserId) => {
 const initializeSocket = (server) => {
   const io = socket(server, {
     cors: {
-      origin: process.env.CLIENT_URL || "http://localhost:5173",
+      origin: [
+        "https://devtinder-web-five.vercel.app",
+        "http://localhost:5173",
+      ],
+      methods: ["GET", "POST"],
+      credentials: true, // ✅ Required for auth-based sockets
     },
+    path: "/socket.io/", // ✅ Ensure correct WebSocket path
   });
 
   io.on("connection", (socket) => {
+    console.log("🟢 New WebSocket Connection:", socket.id);
+
     socket.on("joinChat", ({ firstName, userId, targetUserId }) => {
       const roomId = getSecretRoomId(userId, targetUserId);
       console.log(`${firstName} joined Room: ${roomId}`);
@@ -68,7 +76,7 @@ const initializeSocket = (server) => {
     );
 
     socket.on("disconnect", () => {
-      console.log("User disconnected");
+      console.log("User disconnected:", socket.id);
     });
   });
 };
