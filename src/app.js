@@ -7,9 +7,9 @@ require("dotenv").config();
 
 // CORS configuration
 const corsOptions = {
-  origin: process.env.CLIENT_URL || "*",
+  origin: [process.env.CLIENT_URL, "http://localhost:5173"], // Allow both local and deployed frontend
   methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
-  credentials: true,
+  credentials: true, // Required for cookies and authentication
 };
 
 const app = express();
