@@ -7,7 +7,7 @@ require("dotenv").config();
 
 const app = express();
 const corsOptions = {
-  origin: "http://localhost:5173", // Ensures only one string (not array)
+  origin: "http://localhost:5173" || process.env.CLIENT_URL, // Ensures only one string (not array)
   methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
   credentials: true, // Required for cookies
   allowedHeaders: ["Content-Type", "Authorization", "Cookie"], // ✅ Add "Cookie" for proper session handling
