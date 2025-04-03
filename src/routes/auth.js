@@ -7,7 +7,6 @@ const bcrypt = require("bcrypt");
 authRouter.post("/signup", async (req, res) => {
   try {
     validateSignUpData(req);
-
     const { firstName, lastName, emailId, password, gender } = req.body;
 
     const existingUser = await User.findOne({ emailId });
@@ -18,7 +17,6 @@ authRouter.post("/signup", async (req, res) => {
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
-
     const user = new User({
       firstName,
       lastName,
@@ -26,14 +24,13 @@ authRouter.post("/signup", async (req, res) => {
       gender,
       password: passwordHash,
     });
-
     const savedUser = await user.save();
     const token = await savedUser.getJWT();
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true,
-      sameSite: "None",
+      secure: process.env.NODE_ENV === "production", // ✅ Only secure in production
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // ✅ Allows cross-site cookies
       expires: new Date(Date.now() + 8 * 3600000),
     });
 
@@ -56,8 +53,8 @@ authRouter.post("/login", async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true,
-      sameSite: "None",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
       expires: new Date(Date.now() + 8 * 3600000),
     });
 
@@ -70,8 +67,8 @@ authRouter.post("/login", async (req, res) => {
 authRouter.post("/logout", async (req, res) => {
   res.cookie("token", "", {
     httpOnly: true,
-    secure: true,
-    sameSite: "None",
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     expires: new Date(0),
   });
   res.json({ message: "Logout successful!" });

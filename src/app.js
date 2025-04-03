@@ -6,16 +6,24 @@ const http = require("http");
 require("dotenv").config();
 
 const app = express();
+
+const allowedOrigins = [process.env.CLIENT_URL, "http://localhost:5173"];
+
 const corsOptions = {
-  origin: process.env.CLIENT_URL || "http://localhost:5173", // Ensures only one string (not array)
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
-  credentials: true, // Required for cookies
-  allowedHeaders: ["Content-Type", "Authorization", "Cookie"], // ✅ Add "Cookie" for proper session handling
+  credentials: true, // ✅ Required for cookies
+  allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
 };
 
 app.use(cors(corsOptions));
-
-app.options("*", cors(corsOptions));
+app.options("*", cors(corsOptions)); // ✅ Allow preflight requests
 
 app.use(express.json());
 app.use(cookieParser());
