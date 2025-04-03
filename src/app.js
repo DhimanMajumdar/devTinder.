@@ -7,23 +7,27 @@ require("dotenv").config();
 
 const app = express();
 
-const allowedOrigins = [process.env.CLIENT_URL, "http://localhost:5173"];
+const allowedOrigins = [
+  process.env.CLIENT_URL || "https://devtinder-web-five.vercel.app",
+  "http://localhost:5173",
+];
 
-const corsOptions = {
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
-  credentials: true, // ✅ Required for cookies
-  allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
-};
-
-app.use(cors(corsOptions));
-app.options("*", cors(corsOptions)); // ✅ Allow preflight requests
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.error(`Blocked CORS request from: ${origin}`);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    credentials: true, // ✅ Required for cookies/auth headers
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+  })
+);
+app.options("*", cors()); // ✅ Allow preflight requests globally
 
 app.use(express.json());
 app.use(cookieParser());
