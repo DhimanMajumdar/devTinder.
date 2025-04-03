@@ -14,13 +14,13 @@ const initializeSocket = (server) => {
   const io = socket(server, {
     cors: {
       origin: [
-        "https://devtinder-web-five.vercel.app",
+        process.env.CLIENT_URL || "https://devtinder-web-five.vercel.app",
         "http://localhost:5173",
       ],
       methods: ["GET", "POST"],
-      credentials: true, // ✅ Required for auth-based sockets
+      credentials: true,
     },
-    path: "/socket.io/", // ✅ Ensure correct WebSocket path
+    path: "/socket.io/",
   });
 
   io.on("connection", (socket) => {
@@ -79,6 +79,8 @@ const initializeSocket = (server) => {
       console.log("User disconnected:", socket.id);
     });
   });
+
+  return io;
 };
 
 module.exports = initializeSocket;
