@@ -5,16 +5,17 @@ const cors = require("cors");
 const http = require("http");
 require("dotenv").config();
 
+const app = express();
+
 // CORS configuration
 const corsOptions = {
-  origin: [process.env.CLIENT_URL, "http://localhost:5173"], // Allow both local and deployed frontend
+  origin: [process.env.CLIENT_URL, "http://localhost:5173"], // Allow both deployed & local frontend
   methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
-  credentials: true, // Required for cookies and authentication
+  credentials: true, // Required for authentication (cookies, sessions)
 };
 
-const app = express();
 app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
+app.options("*", cors(corsOptions)); // Handle preflight requests
 app.use(express.json());
 app.use(cookieParser());
 
