@@ -7,7 +7,7 @@ require("dotenv").config();
 
 // CORS configuration
 const corsOptions = {
-  origin: process.env.CLIENT_URL || "http://localhost:5173",
+  origin: process.env.CLIENT_URL || "*",
   methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
   credentials: true,
 };
