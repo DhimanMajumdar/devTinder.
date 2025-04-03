@@ -1,54 +1,43 @@
 const express = require("express");
 const connectDB = require("./config/database");
-const app = express();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-const http=require('http');
-require('dotenv').config()
+const http = require("http");
+require("dotenv").config();
 
 // CORS configuration
 const corsOptions = {
-  origin: 'http://localhost:5173',  // Your frontend URL
-  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],  // Ensure PATCH is allowed
-  credentials: true,  // Allow credentials (like cookies)
+  origin: process.env.CLIENT_URL || "http://localhost:5173",
+  methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+  credentials: true,
 };
 
-// Apply CORS middleware with the correct options
+const app = express();
 app.use(cors(corsOptions));
-
-// Handle preflight requests (OPTIONS)
-app.options('*', cors(corsOptions));
-
-
-
-// Body parsing middleware
+app.options("*", cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
-
-
 
 // Import routes
 const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/request");
 const userRouter = require("./routes/user");
-const chatRouter=require("./routes/chat");
-const initializeSocket = require("./utils/socket");
+const chatRouter = require("./routes/chat");
 
-// Use routers
-app.use("/", authRouter, profileRouter, requestRouter, userRouter,chatRouter);
-const server=http.createServer(app);
+app.use("/", authRouter, profileRouter, requestRouter, userRouter, chatRouter);
+
+const server = http.createServer(app);
+const initializeSocket = require("./utils/socket");
 initializeSocket(server);
-// Connect to the database and start server
+
+// Connect to DB and start server
 connectDB()
   .then(() => {
-    console.log("Database connection established...");  
-    
-    // Listen on port 5000
-    server.listen(5000, () => {
-      console.log("Server is successfully listening on port 5000...");
+    console.log("Database connected...");
+    const PORT = process.env.PORT || 5000;
+    server.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
     });
   })
-  .catch((err) => {
-    console.error("Database cannot be connected!", err);
-  });
+  .catch((err) => console.error("Database connection failed!", err));

@@ -13,14 +13,14 @@ const getSecretRoomId = (userId, targetUserId) => {
 const initializeSocket = (server) => {
   const io = socket(server, {
     cors: {
-      origin: "http://localhost:5173",
+      origin: process.env.CLIENT_URL || "http://localhost:5173",
     },
   });
 
   io.on("connection", (socket) => {
     socket.on("joinChat", ({ firstName, userId, targetUserId }) => {
       const roomId = getSecretRoomId(userId, targetUserId);
-      console.log(`${firstName} Joined Room: ${roomId}`);
+      console.log(`${firstName} joined Room: ${roomId}`);
       socket.join(roomId);
     });
 
@@ -32,35 +32,44 @@ const initializeSocket = (server) => {
           console.log(`${firstName}: ${text}`);
 
           let chat = await Chat.findOne({
-            participants: { 
+            participants: {
               $all: [
-                new mongoose.Types.ObjectId(userId), 
-                new mongoose.Types.ObjectId(targetUserId)
-              ] 
-            }
+                new mongoose.Types.ObjectId(userId),
+                new mongoose.Types.ObjectId(targetUserId),
+              ],
+            },
           });
 
           if (!chat) {
             chat = new Chat({
               participants: [
-                new mongoose.Types.ObjectId(userId), 
-                new mongoose.Types.ObjectId(targetUserId)
+                new mongoose.Types.ObjectId(userId),
+                new mongoose.Types.ObjectId(targetUserId),
               ],
               messages: [],
             });
           }
 
-          chat.messages.push({ senderId: new mongoose.Types.ObjectId(userId), text });
+          chat.messages.push({
+            senderId: new mongoose.Types.ObjectId(userId),
+            text,
+          });
           await chat.save();
 
-          io.to(roomId).emit("messageReceived", { firstName, text, timeStamp: new Date() });
+          io.to(roomId).emit("messageReceived", {
+            firstName,
+            text,
+            timeStamp: new Date(),
+          });
         } catch (err) {
           console.error(err);
         }
       }
     );
 
-    socket.on("disconnect", () => {});
+    socket.on("disconnect", () => {
+      console.log("User disconnected");
+    });
   });
 };
 

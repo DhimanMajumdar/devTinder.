@@ -1,15 +1,18 @@
 {
   "name": "devtinder",
   "version": "1.0.0",
-  "description": "tinder for devs",
-  "main": "index.js",
+  "description": "Tinder for devs",
+  "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon src/app.js"
   },
   "keywords": [
     "nodejs",
-    "javascript"
+    "javascript",
+    "tinder",
+    "developers",
+    "chat"
   ],
   "author": "Dhiman Majumdar",
   "license": "ISC",
@@ -21,8 +24,10 @@
     "express": "^4.21.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.6.3",
-    "react-hot-toast": "^2.5.2",
     "socket.io": "^4.8.1",
     "validator": "^13.12.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
   }
 }
