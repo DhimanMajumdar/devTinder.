@@ -3,27 +3,25 @@ const User = require("../models/user");
 
 const userAuth = async (req, res, next) => {
   try {
-    // Read the token from the req cookies
     const { token } = req.cookies;
     if (!token) {
-      return res.status(401).send("Unauthorized: No token provided");
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: No token provided" });
     }
-    
-    const decodeObj = jwt.verify(token,process.env.JWT_SECRET);
-    const { _id } = decodeObj;
-    
-    const user = await User.findById(_id);
+
+    const decodeObj = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decodeObj._id);
+
     if (!user) {
-      return res.status(404).send("User not found");
+      return res.status(404).json({ message: "User not found" });
     }
-    
+
     req.user = user;
     next();
   } catch (err) {
-    return res.status(401).send("Unauthorized: Invalid token");
+    res.status(401).json({ message: "Unauthorized: Invalid token" });
   }
 };
 
-module.exports = {
-  userAuth,
-};
+module.exports = { userAuth };

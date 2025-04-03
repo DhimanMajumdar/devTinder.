@@ -6,16 +6,17 @@ const http = require("http");
 require("dotenv").config();
 
 const app = express();
-
-// CORS configuration
 const corsOptions = {
-  origin: [process.env.CLIENT_URL, "http://localhost:5173"], // Allow both deployed & local frontend
+  origin: "http://localhost:5173", // Ensures only one string (not array)
   methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
-  credentials: true, // Required for authentication (cookies, sessions)
+  credentials: true, // Required for cookies
+  allowedHeaders: ["Content-Type", "Authorization", "Cookie"], // ✅ Add "Cookie" for proper session handling
 };
 
 app.use(cors(corsOptions));
-app.options("*", cors(corsOptions)); // Handle preflight requests
+
+app.options("*", cors(corsOptions));
+
 app.use(express.json());
 app.use(cookieParser());
 
@@ -32,7 +33,6 @@ const server = http.createServer(app);
 const initializeSocket = require("./utils/socket");
 initializeSocket(server);
 
-// Connect to DB and start server
 connectDB()
   .then(() => {
     console.log("Database connected...");
