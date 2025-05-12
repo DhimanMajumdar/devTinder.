@@ -13,10 +13,7 @@ const getSecretRoomId = (userId, targetUserId) => {
 const initializeSocket = (server) => {
   const io = socket(server, {
     cors: {
-      origin: [
-        process.env.CLIENT_URL || "https://devtinder-web-five.vercel.app",
-        "http://localhost:5173",
-      ],
+      origin: [process.env.CLIENT_URL || "http://localhost:5173"],
       methods: ["GET", "POST"],
       credentials: true,
     },

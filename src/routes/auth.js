@@ -29,8 +29,6 @@ authRouter.post("/signup", async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // ✅ Only secure in production
-      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // ✅ Allows cross-site cookies
       expires: new Date(Date.now() + 8 * 3600000),
     });
 
@@ -53,8 +51,6 @@ authRouter.post("/login", async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
       expires: new Date(Date.now() + 8 * 3600000),
     });
 
@@ -67,8 +63,6 @@ authRouter.post("/login", async (req, res) => {
 authRouter.post("/logout", async (req, res) => {
   res.cookie("token", "", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     expires: new Date(0),
   });
   res.json({ message: "Logout successful!" });

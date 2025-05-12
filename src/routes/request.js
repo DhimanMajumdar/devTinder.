@@ -80,9 +80,9 @@ requestRouter.post(
           .json({ message: "Connection Request not found!!" });
       }
 
-      connectionRequest.status=status;
-      const data=await connectionRequest.save();
-      res.json({message:"Connection Request " + status, data});
+      connectionRequest.status = status;
+      const data = await connectionRequest.save();
+      res.json({ message: "Connection Request " + status, data });
     } catch (err) {
       res.status(400).send("ERROR: " + err.message);
     }
